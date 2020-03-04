@@ -63,7 +63,7 @@ function build_saml2aws() {
 
   echo -e "Adding GOPATH to PATH"
   DEFAULT_PATH=$PATH
-  # export PATH="$PATH:$GOPATH/bin"
+  export PATH="$PATH:$GOPATH/bin"
   echo "PATH=$PATH"
 
   pushd $GOPATH/src/github.com/versent
@@ -87,6 +87,10 @@ function build_saml2aws() {
 
    echo "make prepare"
    make prepare
+
+  export PATH=$DEFAULT_PATH
+  echo -e "Current Directory: $PWD"
+  echo -e "Curent PATH: $PATH"
 
   echo "make compile"
   make compile
