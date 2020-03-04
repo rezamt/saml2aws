@@ -57,9 +57,10 @@ function build_saml2aws() {
   echo "PATH=$PATH"
 
   go version
-  # make mod
 
-  # make build
+  echo "Building SAML2AWS Code"
+  make mod
+  make install
 }
 
 source "./jenkins.vars"
