@@ -21,6 +21,14 @@ function verify_tools {
   return 0
 }
 
+function set_env {
+  export GOPATH=$PWD/.go
+  echo "GOPATH=$GOPATH"
+
+  export PATH="$PATH:$PWD/go/bin"
+  echo "PATH=$PATH"
+}
+
 function install_go {
     echo -n "Downloading golang package"
     GO_PACKAGE_URL='https://dl.google.com/go/go1.14.linux-amd64.tar.gz'
@@ -51,12 +59,6 @@ function install_go {
 
 
 function build_saml2aws() {
-  export GOPATH=$PWD/.go
-  echo "GOPATH=$GOPATH"
-
-  export PATH="$PATH:$PWD/go/bin"
-  echo "PATH=$PATH"
-
   mkdir -p $GOPATH/src/github.com/versent
 
   pushd $GOPATH/src/github.com/versent
@@ -76,16 +78,33 @@ function build_saml2aws() {
   go env -w GOPROXY=direct
   go env -w GOSUMDB=off
 
-  echo "Installing go modules :: make mod"
-  make mod
+  echo "Installing go modules :: make prepare"
+  make prepare
+  echo "Installing go modules :: make compile"
+  make compile
 
-  echo "Installing go modules :: make inst  all"
-  make install
-
-  ls -rtl $GOPATH/bin/*
 }
 
+
+function dist_saml2aws() {
+
+  pushd $GOPATH/src/github.com/versent/saml2aws
+
+  echo "Creating distribution package"
+  make dist
+
+  popd
+
+  echo "Moving distribution file to the project folder"
+  mv $GOPATH/src/github.com/versent/saml2aws/dist ./dist
+
+  ls -rtl ./dist
+}
+
+
 source "./jenkins.vars"
+
+set_env
 
 case "$1" in
     install)
@@ -94,6 +113,10 @@ case "$1" in
 
     build)
       build_saml2aws
+        ;;
+
+    dist)
+      dist_saml2aws
         ;;
 
     verify)
