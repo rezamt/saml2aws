@@ -73,6 +73,8 @@ function build_saml2aws() {
 
   echo "Installing go modules :: make inst  all"
   make install
+
+  ls -rtl $GOPATH/bin/*
 }
 
 source "./jenkins.vars"
