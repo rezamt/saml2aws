@@ -1,8 +1,5 @@
 #!/bin/bash
 
-
-
-
 function verify_tools {
   echo "Checking required tools..."
   TOOLLIST="curl go make"
@@ -45,25 +42,31 @@ function install_go {
     fi
     echo -e "Goland package successfully installed"
 
-    mkdir $PWD/.go
+    PROJECT_WORKSPACE=$PWD/.go
+    echo -e "Creating project workspace: $PROJECT_WORKSPACE"
+    mkdir -p $PROJECT_WORKSPACE
 
     return 0
 }
 
 
 function build_saml2aws() {
-  export GOPATH=$PWD/go
+  export GOPATH=$PWD/.go
   echo "GOPATH=$GOPATH"
-
-  export GOROOT=$PWD/.go
-  echo "GOROOT=$GOROOT"
 
   export PATH="$PATH:${GOPATH}/bin"
   echo "PATH=$PATH"
 
-  go version
+  mkdir -p $GOPATH/src/github.com/versent
+
+  pushd $GOPATH/src/github.com/versent
+
+  git clone $GIT_REPO
+
+  pushd saml2aws
 
   echo "Building SAML2AWS Code"
+
   make mod
   make install
 }
