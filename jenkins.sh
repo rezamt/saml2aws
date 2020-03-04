@@ -65,9 +65,13 @@ function build_saml2aws() {
 
   pushd saml2aws
 
-  echo "Building SAML2AWS Code"
+  go env -w GOPROXY=direct
+  go env -w GOSUMDB=off
 
+  echo "Installing go modules :: make mod"
   make mod
+
+  echo "Installing go modules :: make inst  all"
   make install
 }
 
