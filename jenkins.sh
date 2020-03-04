@@ -78,9 +78,7 @@ function build_saml2aws() {
   go env -w GOPROXY=direct
   go env -w GOSUMDB=off
 
-  echo "Installing go modules :: make prepare"
-  make prepare
-  echo "Installing go modules :: make compile"
+  echo "  make compile"
   make compile
 
 }
