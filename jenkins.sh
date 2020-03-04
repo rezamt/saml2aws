@@ -66,13 +66,13 @@ function build_saml2aws() {
   pushd saml2aws
 
 
-  # https://golang.org/doc/go1.13
-  # Users who cannot reach the default proxy and checksum database (for example, due to a firewalled or sandboxed configuration)
-  # may disable their use by setting GOPROXY to direct, and/or GOSUMDB to off. go env -w can be used to set the default
-  # values for these variables independent of platform:
-  # go env -w GOPROXY=direct
-  # go env -w GOSUMDB=off
-  
+  echo "# https://golang.org/doc/go1.13"
+  echo "#  Users who cannot reach the default proxy and checksum database (for example, due to a firewalled or sandboxed configuration)"
+  echo "#  may disable their use by setting GOPROXY to direct, and/or GOSUMDB to off. go env -w can be used to set the default"
+  echo "#  values for these variables independent of platform:"
+  echo "#  go env -w GOPROXY=direct"
+  echo "#  go env -w GOSUMDB=off"
+
   go env -w GOPROXY=direct
   go env -w GOSUMDB=off
 
