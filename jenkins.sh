@@ -54,7 +54,7 @@ function build_saml2aws() {
   export GOPATH=$PWD/.go
   echo "GOPATH=$GOPATH"
 
-  export PATH="$PATH:${GOPATH}/bin"
+  export PATH="$PATH:$PWD/go/bin"
   echo "PATH=$PATH"
 
   mkdir -p $GOPATH/src/github.com/versent
