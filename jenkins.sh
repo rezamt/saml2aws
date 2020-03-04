@@ -45,6 +45,8 @@ function install_go {
     fi
     echo -e "Goland package successfully installed"
 
+    mkdir $PWD/.go
+
     return 0
 }
 
@@ -52,6 +54,9 @@ function install_go {
 function build_saml2aws() {
   export GOPATH=$PWD/go
   echo "GOPATH=$GOPATH"
+
+  export GOROOT=$PWD/.go
+  echo "GOROOT=$GOROOT"
 
   export PATH="$PATH:${GOPATH}/bin"
   echo "PATH=$PATH"
