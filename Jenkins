@@ -1,0 +1,109 @@
+pipeline {
+
+    agent {
+        label 'Slaves'
+    }
+
+    options {
+        timeout(time: 15, unit: 'HOURS') // FOR NOW but I should change it
+    }
+
+    parameters {
+		string(
+                name: 'BRANCH',
+                defaultValue:"master",
+                description: "Git Repo Branch (default: master)")
+	}
+
+    environment {
+        PIPELINE_NAME = "${JOB_NAME}"
+        PIPELINE_LABEL = "${BUILD_NUMBER}"
+        // saml2aws will start with this role
+        ROLE_NAME='account-foundation-admin-role'
+        // tool proceed with this role
+        PROVISION_ROLE_NAME = 'cross-account-foundation-provision-role'
+    }
+
+    stages {
+        stage ('verification') {
+            steps {
+                script {
+                    currentBuild.description = ""
+                }
+
+
+            }
+        }
+
+       stage('Checkout') {
+          steps {
+            step([$class: 'WsCleanup'])
+            script {
+                def rscm = checkout([$class: 'GitSCM',
+                                    branches: [[name: 'master']], doGenerateSubmoduleConfigurations: false,
+                                    extensions: [[$class: 'CleanBeforeCheckout']],
+                                    submoduleCfg: [],
+                                    userRemoteConfigs: [[credentialsId: 'Git',
+                                    url: 'https://github.com/rezamt/saml2aws']]])
+                env.GIT_REVISION = rscm.GIT_COMMIT
+            }
+          }
+        }
+
+        stage('prepare') {
+            steps {
+                script {
+                    currentBuild.displayName = "${JOB_NAME}-${env.PIPELINE_LABEL}"
+                    currentBuild.description = "Branch: ${env.BRANCH}"
+                }
+				sh '''
+					chmod 755 ./jenkins.sh
+					./jenkins.sh install
+					./jenkins.sh verify
+				'''
+
+            }
+        }
+
+        stage('build') {
+            steps {
+				sh './jenkins.sh build'  // verifying golang
+            }
+        }
+
+        stage('dist') {
+            steps {
+				sh './jenkins.sh dist'  // verifying golang
+            }
+        }
+
+    } // stages
+
+    post {
+        success {
+            // Notify the Build user about the status of the build
+            wrap([$class: 'BuildUser']) {
+                echo "sending Notifcation email to: $BUILD_USER_EMAIL"
+
+                emailext body: 'https://jenkins35.nbnco.net.au/job/${JOB_NAME}/',
+                         to: "${BUILD_USER_EMAIL}" ,
+                         subject: 'Jenkins Job ${JOB_NAME} Build: ${BUILD_NUMBER} - Status: SUCCESS'
+            }
+
+            echo 'Collecting Packages'
+            archiveArtifacts artifacts: 'dist/**.*', fingerprint: true
+
+        }
+
+        failure {
+            // Notify the Build user about the status of the build
+            wrap([$class: 'BuildUser']) {
+                echo "sending Notifcation email to: $BUILD_USER_EMAIL"
+
+                emailext body: 'https://jenkins35.nbnco.net.au/job/${JOB_NAME}/${BUILD_NUMBER}/console',
+                         to: "${BUILD_USER_EMAIL}" ,
+                         subject: 'Jenkins Job ${JOB_NAME} Build: ${BUILD_NUMBER} - Status: FAILED'
+            }
+        }
+    } // post
+}

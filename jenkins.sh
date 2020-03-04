@@ -61,6 +61,10 @@ function install_go {
 function build_saml2aws() {
   mkdir -p $GOPATH/src/github.com/versent
 
+  echo -e "Adding GOPATH to PATH"
+  export PATH="$PATH:$GOPATH/bin"
+  echo "PATH=$PATH"
+
   pushd $GOPATH/src/github.com/versent
 
   git clone $GIT_REPO
@@ -78,7 +82,10 @@ function build_saml2aws() {
   go env -w GOPROXY=direct
   go env -w GOSUMDB=off
 
-  echo "  make compile"
+  echo "make prepare"
+  make prepare
+
+  echo "make compile"
   make compile
 
 }
