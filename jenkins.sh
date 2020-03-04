@@ -1,20 +1,80 @@
 #!/bin/bash
 
 
+
+
+function verify_tools {
+  echo "Checking required tools..."
+  TOOLLIST="curl go make"
+
+  export GOPATH=$PWD/go
+  echo "GOPATH=$GOPATH"
+
+  export PATH="$PATH:${GOPATH}/bin"
+  echo "PATH=$PATH"
+
+  for TOOL in `echo $TOOLLIST`
+  do
+    which $TOOL 1>/dev/null 2>&1
+    if [[ $? -ne "0" ]]
+       then echo "$TOOL not found - please install." && exit 1
+    fi
+  done
+  echo -e " OK"
+  return 0
+}
+
+function install_go {
+    echo -n "Downloading golang package"
+    GO_PACKAGE_URL='https://dl.google.com/go/go1.14.linux-amd64.tar.gz'
+    GO_PACKAGE='go1.14.linux-amd64.tar.gz'
+
+    curl -o ./go1.14.linux-amd64.tar.gz $GO_PACKAGE_URL
+
+    if [[ $? -ne "0" ]] ; then
+       echo -e "Failed to Download Golang binaries from $GO_PACKAGE_URL" && exit 1
+    fi
+    echo -e "Goland binaries successfully downloaded"
+
+
+    echo -e "Extracting go package $GO_PACKAGE to go"
+
+    tar -xvf $GO_PACKAGE
+    if [[ $? -ne "0" ]] ; then
+       echo -e "Failed to Download Golang binaries from $GO_PACKAGE_URL" && exit 1
+    fi
+    echo -e "Goland package successfully installed"
+
+    return 0
+}
+
+
+function build_saml2aws() {
+  export GOPATH=$PWD/go
+  echo "GOPATH=$GOPATH"
+
+  export PATH="$PATH:${GOPATH}/bin"
+  echo "PATH=$PATH"
+
+  go version
+  # make mod
+
+  # make build
+}
+
 source "./jenkins.vars"
 
 case "$1" in
     install)
-      echo "Installing golang version 1.14"
+      install_go
         ;;
 
     build)
-      echo "Buidling saml2aws"
+      build_saml2aws
         ;;
 
-
     verify)
-      echo "Checking environment settings"
+      verify_tools
         ;;
 
     *)
