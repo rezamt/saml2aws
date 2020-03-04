@@ -62,6 +62,7 @@ function build_saml2aws() {
   mkdir -p $GOPATH/src/github.com/versent
 
   echo -e "Adding GOPATH to PATH"
+  DEFAULT_PATH=$PATH
   export PATH="$PATH:$GOPATH/bin"
   echo "PATH=$PATH"
 
@@ -82,11 +83,17 @@ function build_saml2aws() {
   go env -w GOPROXY=direct
   go env -w GOSUMDB=off
 
-  echo "make prepare"
-  make prepare
+#   echo "make prepare"
+#   make prepare
 
-  echo "make compile"
-  make compile
+#   echo "make compile"
+#   make compile
+
+  echo "makd mod"
+  make mod
+
+  echo "make install"
+  make install
 
 }
 
