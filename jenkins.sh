@@ -63,7 +63,7 @@ function build_saml2aws() {
 
   echo -e "Adding GOPATH to PATH"
   DEFAULT_PATH=$PATH
-  export PATH="$PATH:$GOPATH/bin"
+  # export PATH="$PATH:$GOPATH/bin"
   echo "PATH=$PATH"
 
   pushd $GOPATH/src/github.com/versent
@@ -72,6 +72,8 @@ function build_saml2aws() {
 
   pushd saml2aws
 
+
+  echo -e "Current Build directory: $PWD"
 
   echo "# https://golang.org/doc/go1.13"
   echo "#  Users who cannot reach the default proxy and checksum database (for example, due to a firewalled or sandboxed configuration)"
@@ -83,17 +85,11 @@ function build_saml2aws() {
   go env -w GOPROXY=direct
   go env -w GOSUMDB=off
 
-#   echo "make prepare"
-#   make prepare
+   echo "make prepare"
+   make prepare
 
-#   echo "make compile"
-#   make compile
-
-  echo "makd mod"
-  make mod
-
-  echo "make install"
-  make install
+  echo "make compile"
+  make compile
 
 }
 
@@ -103,6 +99,7 @@ function dist_saml2aws() {
   pushd $GOPATH/src/github.com/versent/saml2aws
 
   echo "Creating distribution package"
+  echo "make dist"
   make dist
 
   popd
