@@ -29,7 +29,6 @@ mod:
 compile: mod
 	@rm -rf build/
 	@$(BIN_DIR)/gox -ldflags "-X main.Version=$(VERSION)" \
-	-osarch="darwin/amd64" \
 	-osarch="linux/i386" \
 	-osarch="linux/amd64" \
 	-osarch="windows/amd64" \
