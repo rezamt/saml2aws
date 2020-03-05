@@ -54,6 +54,9 @@ function install_go {
     echo -e "Creating project workspace: $PROJECT_WORKSPACE"
     mkdir -p $PROJECT_WORKSPACE
 
+    echo -e "Installing SHA512 package"
+    yum install -y perl-Digest-SHA
+
     return 0
 }
 
